@@ -1,6 +1,6 @@
 {
   "name": "kung-fig-dynamic",
-  "version": "0.41.6",
+  "version": "0.41.7",
   "engines": {
     "node": ">=6.0.0"
   },
@@ -37,10 +37,10 @@
     }
   },
   "copyright": {
-    "title": "Kung Fig",
+    "title": "Kung Fig Dynamic",
     "years": [
       2015,
-      2017
+      2018
     ],
     "owner": "Cédric Ronvel"
   }
