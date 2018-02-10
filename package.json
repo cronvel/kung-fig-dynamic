@@ -1,0 +1,47 @@
+{
+  "name": "kung-fig-dynamic",
+  "version": "0.41.6",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "description": "Interface for Dynamic kung-fig objects.",
+  "main": "lib/Dynamic.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "expect.js": "^0.3.1"
+  },
+  "scripts": {
+    "test": "tea-time -R dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cronvel/kung-fig-dynamic.git"
+  },
+  "keywords": [
+    "dynamic",
+    "object"
+  ],
+  "author": "Cédric Ronvel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cronvel/kung-fig-dynamic/issues"
+  },
+  "config": {
+    "tea-time": {
+      "coverDir": [
+        "lib"
+      ]
+    }
+  },
+  "copyright": {
+    "title": "Kung Fig",
+    "years": [
+      2015,
+      2017
+    ],
+    "owner": "Cédric Ronvel"
+  }
+}
