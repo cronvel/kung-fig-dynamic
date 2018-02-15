@@ -33,7 +33,7 @@
 
 var Dynamic = require( '..' ) ;
 
-//var expect = require( 'expect.js' ) ;
+var expect = require( 'expect.js' ) ;
 
 
 
@@ -49,9 +49,121 @@ function debfn( v )
 
 
 
+function Implement( v , applicable ) {
+	this.value = v ;
+	this.__isApplicable__ = !! applicable ;
+	this.__isDynamic__ = ! applicable ;
+	this.getValueCount = 0 ;
+	this.applyCount = 0 ;
+	this.id = null ;
+}
+
+Implement.prototype = Object.create( Dynamic.prototype ) ;
+
+Implement.prototype.get =
+Implement.prototype.getValue = function getValue() {
+	if ( this.id ) { console.log( ".getValue() for" , this.id ) ; }
+	this.getValueCount ++ ;
+	if ( ! this.__isDynamic__ ) { return this ; }
+	return this.value ;
+} ;
+
+Implement.prototype.apply = function apply() {
+	if ( this.id ) { console.log( ".apply() for" , this.id ) ; }
+	this.applyCount ++ ;
+	if ( ! this.__isApplicable__ ) { return this ; }
+	return this.value ;
+} ;
+
+
+
 describe( "Dynamic test" , function() {
 	
-	it( "TODO..." ) ;
+	it( "Basic dynamic test" , function() {
+		var outer = new Implement( "bob" ) ;
+		
+		expect( outer.getValue() ).to.be( "bob" ) ;
+		expect( outer.getFinalValue() ).to.be( "bob" ) ;
+		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( "bob" ) ;
+		
+		expect( outer.apply() ).to.be( outer ) ;
+	} ) ;
+	
+	it( "Basic applicable test" , function() {
+		var outer = new Implement( "bob" , true ) ;
+		
+		expect( outer.getValue() ).to.be( outer ) ;
+		expect( outer.getFinalValue() ).to.be( outer ) ;
+		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( outer ) ;
+		
+		expect( outer.apply() ).to.be( "bob" ) ;
+	} ) ;
+	
+	it( "Recursive dynamic/dynamic test" , function() {
+		var inner = new Implement( "bob" ) ;
+		var outer = new Implement( inner ) ;
+		
+		expect( outer.getValue() ).to.be( inner ) ;
+		expect( outer.getValue().getValue() ).to.be( "bob" ) ;
+		expect( outer.getFinalValue() ).to.be( "bob" ) ;
+		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( "bob" ) ;
+		
+		expect( outer.apply() ).to.be( outer ) ;
+	} ) ;
+	
+	it( "Recursive applicable/dynamic test" , function() {
+		var inner = new Implement( "bob" ) ;
+		var outer = new Implement( inner , true ) ;
+		
+		expect( outer.getValue() ).to.be( outer ) ;
+		expect( outer.getFinalValue() ).to.be( outer ) ;
+		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( outer ) ;
+		
+		expect( outer.apply() ).to.be( inner ) ;
+		expect( outer.apply().getValue() ).to.be( "bob" ) ;
+	} ) ;
+	
+	it( "Recursive dynamic/applicable test" , function() {
+		var inner = new Implement( "bob" , true ) ;
+		var outer = new Implement( inner ) ;
+		
+		expect( outer.getValue() ).to.be( inner ) ;
+		expect( outer.getValue().getValue() ).to.be( inner ) ;
+		expect( outer.getValue().apply() ).to.be( "bob" ) ;
+		expect( outer.getFinalValue() ).to.be( inner ) ;
+		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( inner ) ;
+		
+		expect( outer.apply() ).to.be( outer ) ;
+	} ) ;
+	
+	it( "Recursive applicable/applicable test" , function() {
+		var inner = new Implement( "bob" , true ) ;
+		var outer = new Implement( inner , true ) ;
+		
+		expect( outer.getValue() ).to.be( outer ) ;
+		expect( outer.getFinalValue() ).to.be( outer ) ;
+		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( outer ) ;
+		
+		expect( outer.apply() ).to.be( inner ) ;
+		expect( outer.apply().getValue() ).to.be( inner ) ;
+		expect( outer.apply().apply() ).to.be( "bob" ) ;
+	} ) ;
+	
+	it( ".getRecursiveFinalValue()" , function() {
+		var inner = new Implement( "bob" ) ;
+		var middle = new Implement( inner , true ) ;
+		var outer = new Implement( middle ) ;
+		
+		inner.id = "inner" ;
+		middle.id = "middle" ;
+		outer.id = "outer" ;
+		
+		var value = Dynamic.getRecursiveFinalValue( outer ) ;
+		
+		expect( outer.getValueCount ).to.be( 1 ) ;
+		expect( middle.getValueCount ).to.be( 0 ) ;
+		expect( inner.getValueCount ).to.be( 0 ) ;
+	} ) ;
 } ) ;
 
 
