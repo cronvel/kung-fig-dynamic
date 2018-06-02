@@ -33,8 +33,6 @@
 
 var Dynamic = require( '..' ) ;
 
-var expect = require( 'expect.js' ) ;
-
 
 
 function deb( v )

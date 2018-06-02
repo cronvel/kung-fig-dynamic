@@ -1,6 +1,6 @@
 {
   "name": "kung-fig-dynamic",
-  "version": "0.41.10",
+  "version": "0.41.11",
   "engines": {
     "node": ">=6.0.0"
   },
@@ -10,9 +10,7 @@
     "test": "test"
   },
   "dependencies": {},
-  "devDependencies": {
-    "expect.js": "^0.3.1"
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "tea-time -R dot"
   },
