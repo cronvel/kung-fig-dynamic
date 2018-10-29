@@ -60,14 +60,14 @@ Implement.prototype = Object.create( Dynamic.prototype ) ;
 
 Implement.prototype.get =
 Implement.prototype.getValue = function getValue() {
-	if ( this.id ) { console.log( ".getValue() for" , this.id ) ; }
+	//if ( this.id ) { console.log( ".getValue() for" , this.id ) ; }
 	this.getValueCount ++ ;
 	if ( ! this.__isDynamic__ ) { return this ; }
 	return this.value ;
 } ;
 
 Implement.prototype.apply = function apply() {
-	if ( this.id ) { console.log( ".apply() for" , this.id ) ; }
+	//if ( this.id ) { console.log( ".apply() for" , this.id ) ; }
 	this.applyCount ++ ;
 	if ( ! this.__isApplicable__ ) { return this ; }
 	return this.value ;
