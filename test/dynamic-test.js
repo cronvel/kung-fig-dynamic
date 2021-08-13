@@ -1,7 +1,7 @@
 /*
 	Kung Fig Dynamic
 
-	Copyright (c) 2015 - 2020 Cédric Ronvel
+	Copyright (c) 2015 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -31,17 +31,15 @@
 
 
 
-var Dynamic = require( '..' ) ;
+const Dynamic = require( '..' ) ;
 
 
 
-function deb( v )
-{
+function deb( v ) {
 	console.log( string.inspect( { style: 'color' , depth: 15 } , v ) ) ;
 }
 
-function debfn( v )
-{
+function debfn( v ) {
 	console.log( string.inspect( { style: 'color' , depth: 5 , proto: true , funcDetails: true } , v ) ) ;
 }
 
@@ -59,14 +57,14 @@ function Implement( v , applicable ) {
 Implement.prototype = Object.create( Dynamic.prototype ) ;
 
 Implement.prototype.get =
-Implement.prototype.getValue = function getValue() {
+Implement.prototype.getValue = function() {
 	//if ( this.id ) { console.log( ".getValue() for" , this.id ) ; }
 	this.getValueCount ++ ;
 	if ( ! this.__isDynamic__ ) { return this ; }
 	return this.value ;
 } ;
 
-Implement.prototype.apply = function apply() {
+Implement.prototype.apply = function() {
 	//if ( this.id ) { console.log( ".apply() for" , this.id ) ; }
 	this.applyCount ++ ;
 	if ( ! this.__isApplicable__ ) { return this ; }
@@ -75,53 +73,53 @@ Implement.prototype.apply = function apply() {
 
 
 
-describe( "Dynamic test" , function() {
+describe( "Dynamic test" , () => {
 	
-	it( "Basic dynamic test" , function() {
+	it( "Basic dynamic test" , () => {
 		var outer = new Implement( "bob" ) ;
 		
 		expect( outer.getValue() ).to.be( "bob" ) ;
 		expect( outer.getFinalValue() ).to.be( "bob" ) ;
-		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( "bob" ) ;
+		expect( Dynamic.getDeepFinalValue( outer ) ).to.be( "bob" ) ;
 		
 		expect( outer.apply() ).to.be( outer ) ;
 	} ) ;
 	
-	it( "Basic applicable test" , function() {
+	it( "Basic applicable test" , () => {
 		var outer = new Implement( "bob" , true ) ;
 		
 		expect( outer.getValue() ).to.be( outer ) ;
 		expect( outer.getFinalValue() ).to.be( outer ) ;
-		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( outer ) ;
+		expect( Dynamic.getDeepFinalValue( outer ) ).to.be( outer ) ;
 		
 		expect( outer.apply() ).to.be( "bob" ) ;
 	} ) ;
 	
-	it( "Recursive dynamic/dynamic test" , function() {
+	it( "Recursive dynamic/dynamic test" , () => {
 		var inner = new Implement( "bob" ) ;
 		var outer = new Implement( inner ) ;
 		
 		expect( outer.getValue() ).to.be( inner ) ;
 		expect( outer.getValue().getValue() ).to.be( "bob" ) ;
 		expect( outer.getFinalValue() ).to.be( "bob" ) ;
-		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( "bob" ) ;
+		expect( Dynamic.getDeepFinalValue( outer ) ).to.be( "bob" ) ;
 		
 		expect( outer.apply() ).to.be( outer ) ;
 	} ) ;
 	
-	it( "Recursive applicable/dynamic test" , function() {
+	it( "Recursive applicable/dynamic test" , () => {
 		var inner = new Implement( "bob" ) ;
 		var outer = new Implement( inner , true ) ;
 		
 		expect( outer.getValue() ).to.be( outer ) ;
 		expect( outer.getFinalValue() ).to.be( outer ) ;
-		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( outer ) ;
+		expect( Dynamic.getDeepFinalValue( outer ) ).to.be( outer ) ;
 		
 		expect( outer.apply() ).to.be( inner ) ;
 		expect( outer.apply().getValue() ).to.be( "bob" ) ;
 	} ) ;
 	
-	it( "Recursive dynamic/applicable test" , function() {
+	it( "Recursive dynamic/applicable test" , () => {
 		var inner = new Implement( "bob" , true ) ;
 		var outer = new Implement( inner ) ;
 		
@@ -129,25 +127,25 @@ describe( "Dynamic test" , function() {
 		expect( outer.getValue().getValue() ).to.be( inner ) ;
 		expect( outer.getValue().apply() ).to.be( "bob" ) ;
 		expect( outer.getFinalValue() ).to.be( inner ) ;
-		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( inner ) ;
+		expect( Dynamic.getDeepFinalValue( outer ) ).to.be( inner ) ;
 		
 		expect( outer.apply() ).to.be( outer ) ;
 	} ) ;
 	
-	it( "Recursive applicable/applicable test" , function() {
+	it( "Recursive applicable/applicable test" , () => {
 		var inner = new Implement( "bob" , true ) ;
 		var outer = new Implement( inner , true ) ;
 		
 		expect( outer.getValue() ).to.be( outer ) ;
 		expect( outer.getFinalValue() ).to.be( outer ) ;
-		expect( Dynamic.getRecursiveFinalValue( outer ) ).to.be( outer ) ;
+		expect( Dynamic.getDeepFinalValue( outer ) ).to.be( outer ) ;
 		
 		expect( outer.apply() ).to.be( inner ) ;
 		expect( outer.apply().getValue() ).to.be( inner ) ;
 		expect( outer.apply().apply() ).to.be( "bob" ) ;
 	} ) ;
 	
-	it( ".getRecursiveFinalValue()" , function() {
+	it( ".getDeepFinalValue()" , () => {
 		var inner = new Implement( "bob" ) ;
 		var middle = new Implement( inner , true ) ;
 		var outer = new Implement( middle ) ;
@@ -156,12 +154,52 @@ describe( "Dynamic test" , function() {
 		middle.id = "middle" ;
 		outer.id = "outer" ;
 		
-		var value = Dynamic.getRecursiveFinalValue( outer ) ;
+		var value = Dynamic.getDeepFinalValue( outer ) ;
 		
 		expect( outer.getValueCount ).to.be( 1 ) ;
 		expect( middle.getValueCount ).to.be( 0 ) ;
 		expect( inner.getValueCount ).to.be( 0 ) ;
+
+		var wrap = { outer } ;
+		value = Dynamic.getDeepFinalValue( wrap ) ;
+		expect( value ).not.to.be( wrap ) ;
+		
+		expect( outer.getValueCount ).to.be( 2 ) ;
+		expect( middle.getValueCount ).to.be( 0 ) ;
+		expect( inner.getValueCount ).to.be( 0 ) ;
+
+		var simple = { a: 1 , b: 2 } ;
+		value = Dynamic.getDeepFinalValue( simple ) ;
+		expect( value ).to.be( simple ) ;
+	} ) ;
+	
+	it( ".getDeepFinalClone()" , () => {
+		var inner = new Implement( "bob" ) ;
+		var middle = new Implement( inner , true ) ;
+		var outer = new Implement( middle ) ;
+		
+		inner.id = "inner" ;
+		middle.id = "middle" ;
+		outer.id = "outer" ;
+		
+		var value = Dynamic.getDeepFinalClone( outer ) ;
+		
+		expect( outer.getValueCount ).to.be( 1 ) ;
+		expect( middle.getValueCount ).to.be( 0 ) ;
+		expect( inner.getValueCount ).to.be( 0 ) ;
+
+		var wrap = { outer } ;
+		value = Dynamic.getDeepFinalClone( wrap ) ;
+		expect( value ).not.to.be( wrap ) ;
+		
+		expect( outer.getValueCount ).to.be( 2 ) ;
+		expect( middle.getValueCount ).to.be( 0 ) ;
+		expect( inner.getValueCount ).to.be( 0 ) ;
+
+		var simple = { a: 1 , b: 2 } ;
+		value = Dynamic.getDeepFinalClone( simple ) ;
+		expect( value ).not.to.be( simple ) ;
+		expect( value ).to.equal( simple ) ;
 	} ) ;
 } ) ;
-
 
