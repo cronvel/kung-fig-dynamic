@@ -24,7 +24,6 @@
 	SOFTWARE.
 */
 
-/* jshint unused:false */
 /* global describe, it, before, after */
 
 "use strict" ;
@@ -173,7 +172,7 @@ describe( "Dynamic test" , () => {
 		expect( value ).to.be( simple ) ;
 	} ) ;
 	
-	it( ".getDeepFinalClone()" , () => {
+	it( ".extractFromStatic()" , () => {
 		var inner = new Implement( "bob" ) ;
 		var middle = new Implement( inner , true ) ;
 		var outer = new Implement( middle ) ;
@@ -182,14 +181,14 @@ describe( "Dynamic test" , () => {
 		middle.id = "middle" ;
 		outer.id = "outer" ;
 		
-		var value = Dynamic.getDeepFinalClone( outer ) ;
+		var value = Dynamic.extractFromStatic( outer ) ;
 		
 		expect( outer.getValueCount ).to.be( 1 ) ;
 		expect( middle.getValueCount ).to.be( 0 ) ;
 		expect( inner.getValueCount ).to.be( 0 ) ;
 
 		var wrap = { outer } ;
-		value = Dynamic.getDeepFinalClone( wrap ) ;
+		value = Dynamic.extractFromStatic( wrap ) ;
 		expect( value ).not.to.be( wrap ) ;
 		
 		expect( outer.getValueCount ).to.be( 2 ) ;
@@ -197,7 +196,7 @@ describe( "Dynamic test" , () => {
 		expect( inner.getValueCount ).to.be( 0 ) ;
 
 		var simple = { a: 1 , b: 2 } ;
-		value = Dynamic.getDeepFinalClone( simple ) ;
+		value = Dynamic.extractFromStatic( simple ) ;
 		expect( value ).not.to.be( simple ) ;
 		expect( value ).to.equal( simple ) ;
 	} ) ;
