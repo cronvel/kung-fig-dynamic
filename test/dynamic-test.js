@@ -181,7 +181,7 @@ describe( "Dynamic test" , () => {
 		middle.id = "middle" ;
 		outer.id = "outer" ;
 		
-		var value = Dynamic.extractFromStatic( outer ) ;
+		var value = outer.extractFromStatic() ;
 		
 		expect( outer.getValueCount ).to.be( 1 ) ;
 		expect( middle.getValueCount ).to.be( 0 ) ;
